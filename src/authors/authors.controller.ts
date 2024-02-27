@@ -6,6 +6,7 @@ import {
   Body,
   NotFoundException,
   Param,
+  Delete,
 } from '@nestjs/common';
 import { PrismaService } from 'src/shared/services/prisma.service';
 import { AuthorsService } from './authors.service';
@@ -41,6 +42,14 @@ export class AuthorsController {
     const author = await this.authorsService.getById(id);
     if (!author) throw new NotFoundException('Author not found, no edit');
     await this.authorsService.updateById(id, authorData);
+    return { success: true };
+  }
+
+  @Delete('/:id')
+  async deleteById(@Param('id', new ParseUUIDPipe()) id: string) {
+    const order = await this.authorsService.getById(id);
+    if (!order) throw new NotFoundException('Author not found, no deleted');
+    await this.authorsService.deleteById(id);
     return { success: true };
   }
 }
