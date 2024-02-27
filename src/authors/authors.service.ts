@@ -16,12 +16,12 @@ export class AuthorsService {
     });
   }
 
-  public async create(orderData: Omit<Author, 'id'>): Promise<Author> {
+  public async create(authorData: Omit<Author, 'id'>): Promise<Author> {
     try {
       return await this.prismaService.author.create({
         data: {
-          name: orderData.name,
-          country: orderData.country,
+          name: authorData.name,
+          country: authorData.country,
         },
       });
     } catch (error) {
@@ -29,5 +29,15 @@ export class AuthorsService {
         throw new ConflictException('Author is exist');
       throw error;
     }
+  }
+
+  public updateById(
+    id: Author['id'],
+    orderData: Omit<Author, 'id'>,
+  ): Promise<Author> {
+    return this.prismaService.author.update({
+      where: { id },
+      data: orderData,
+    });
   }
 }
