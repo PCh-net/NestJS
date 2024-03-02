@@ -1,6 +1,6 @@
 import { Injectable, ConflictException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Role, User } from '@prisma/client';
+import { Password, Role, User } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
@@ -16,88 +16,16 @@ export class UsersService {
       where: { id },
     });
   }
-  public getByEmail(email: User['email']): Promise<User | null> {
+
+  public async getByEmail(
+    email: User['email'],
+  ): Promise<(User & { password: Password }) | null> {
     return this.prismaService.user.findUnique({
       where: { email },
       include: { password: true },
     });
   }
 
-  // public async createUser(userData: Omit<User, 'id'>): Promise<User> {
-  //   const { email, ...otherData } = userData;
-  //   const existingUser = await this.prismaService.user.findUnique({
-  //     where: { email },
-  //   });
-  //   if (existingUser) {
-  //     throw new ConflictException('Email already exists');
-  //   }
-  //   const password = 'hashedpass';
-  //   return await this.prismaService.user.create({
-  //     data: {
-  //       ...otherData,
-  //       email,
-  //       password: {
-  //         create: {
-  //           hashedPassword: password,
-  //         },
-  //       },
-  //     },
-  //   });
-  // }
-
-  // public async create(
-  //   userId: string,
-  //   userData: { email?: string; password?: string; role?: Role },
-  // ): Promise<User> {
-  //   const { email, ...otherData } = userData;
-  //   const existingUser = await this.prismaService.user.findUnique({
-  //     where: { email },
-  //   });
-  //   if (existingUser) {
-  //     throw new ConflictException('Email already exists');
-  //   }
-  //   // const password = 'hashedpass';
-  //   return await this.prismaService.user.create({
-  //     data: {
-  //       ...otherData,
-  //       email,
-  //       password: {
-  //         create: {
-  //           hashedPassword: password,
-  //         },
-  //       },
-  //     },
-  //   });
-  // }
-
-  // public async create(
-  //   userId: string,
-  //   userData: { email?: string; password?: string; role?: Role },
-  // ): Promise<User> {
-  //   const { email, ...otherData } = userData;
-  //   const existingUser = await this.prismaService.user.findUnique({
-  //     where: { email },
-  //   });
-  //   if (existingUser) {
-  //     throw new ConflictException('Email already exists');
-  //   }
-  //   return await this.prismaService.user.create({
-  //     data: {
-  //       ...otherData,
-  //       email,
-  //       password: {
-  //         create: {
-  //           hashedPassword: password,
-  //         },
-  //       },
-  //     },
-  //   });
-  // }
-
-  // public async create(userData: {
-  //   email: string;
-  //   password: string;
-  // ): Promise<User> {
   public async create(userData: {
     email: string;
     password: string;
