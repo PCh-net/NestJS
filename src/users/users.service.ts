@@ -50,6 +50,12 @@ export class UsersService {
     });
   }
 
+  public deleteById(id: User['id']): Promise<User> {
+    return this.prismaService.user.delete({
+      where: { id },
+    });
+  }
+
   public async updateById(
     userId: string,
     userData: { email?: string; password?: string; role?: Role },
@@ -69,7 +75,6 @@ export class UsersService {
     let hashedPassword;
 
     if (password) {
-      // hashedPassword = await bcrypt.hash(password, 10);
       hashedPassword = password;
     }
 
