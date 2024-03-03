@@ -85,4 +85,28 @@ export class BooksService {
       throw error;
     }
   }
+
+  public async likeBook(bookId: string, userId: string) {
+    const alreadyLiked = await this.prismaService.userOnBooks.findUnique({
+      where: {
+        bookId_userId: {
+          bookId: bookId,
+          userId: userId,
+        },
+      },
+    });
+    if (alreadyLiked) {
+      throw new ConflictException('User already liked this book');
+    }
+    return await this.prismaService.book.update({
+      where: { id: bookId },
+      data: {
+        users: {
+          create: {
+            userId: userId,
+          },
+        },
+      },
+    });
+  }
 }

@@ -14,6 +14,7 @@ import { ParseUUIDPipe } from '@nestjs/common';
 import { CreateBookDTO } from './dtos/create-book.dto';
 import { UpdateBookDTO } from './dtos/update-book.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { LikeBookDTO } from './dtos/like-book.dto';
 
 @Controller('books')
 export class BooksController {
@@ -55,6 +56,15 @@ export class BooksController {
     const book = await this.booksService.getById(id);
     if (!book) throw new NotFoundException('Book not found, no edit');
     await this.booksService.updateById(id, bookData);
+    return { success: true };
+  }
+
+  @Post('like')
+  @UseGuards(JwtAuthGuard)
+  async likeBook(@Body() likeBookData: LikeBookDTO) {
+    const book = await this.booksService.getById(likeBookData.bookId);
+    if (!book) throw new NotFoundException('bookId not found');
+    await this.booksService.likeBook(likeBookData.bookId, likeBookData.userId);
     return { success: true };
   }
 }
